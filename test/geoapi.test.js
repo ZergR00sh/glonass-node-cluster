@@ -1,3 +1,5 @@
+// eslint-disable-next-line no-unused-vars
+const should = require('should');
 const io = require('socket.io-client');
 const PORT = 1337;
 const socketURL = `http://0.0.0.0:${PORT}`;
@@ -8,28 +10,27 @@ let redisClient3 = null;
 const CHANNEL = require('../src/constants').CHANNEL;
 const devices = ['devices'];
 const fixture = JSON.stringify(devices);
-// eslint-disable-next-line no-unused-vars
-const should = require('should');
 
 describe('geoapi socket server', function() {
   let server;
 
   beforeEach(function() {
+    server = require('../src/app');
+    server.listen(PORT);
     redisClient1 = redisFactory();
     redisClient2 = redisFactory();
     redisClient3 = redisFactory();
     redisClient3.flushdb();
-    server = require('../src/app');
-    server.listen(PORT);
   });
 
   afterEach(function(done) {
     server.close();
-    redisClient3.flushdb();
-    redisClient3.end(true);
-    redisClient2.end(true);
-    redisClient1.end(true);
-    done();
+    redisClient3.flushdb(() => {
+      redisClient3.end(true);
+      redisClient2.end(true);
+      redisClient1.end(true);
+      done();
+    });
   });
 
   it('should connect to the server pub and retrive data', function(done) {

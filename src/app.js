@@ -6,7 +6,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 const REDIS = require('./constants').REDIS;
 const api = require('./api');
-const geoapi = require('./geoapi');
+const geoApi = require('./geo-api');
 
 const app = express();
 /* eslint new-cap: [0, {capIsNewExceptions: ["S"]}] */
@@ -35,7 +35,7 @@ if(process.env.NODE_ENV === 'production') {
 
 app.use('/api', api);
 
-io.on('connection', geoapi(io));
+io.on('connection', geoApi(io));
 
 app.use(function(req, res, next) {
   const err = new Error('Not Found');
