@@ -1,0 +1,33 @@
+{
+  "name": "glonass-node-cluster",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "test": "`npm bin`/mocha",
+    "lint": "`npm bin`/eslint .",
+    "pretest": "npm run lint"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.2",
+    "compression": "^1.6.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "express": "~4.14.0",
+    "helmet": "^3.1.0",
+    "morgan": "~1.7.0",
+    "redis": "^2.6.3",
+    "serve-favicon": "~2.3.0",
+    "socket.io": "^1.7.1",
+    "socket.io-redis": "^2.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.12.0",
+    "eslint-config-google": "^0.7.1",
+    "mocha": "^3.2.0",
+    "should": "^11.1.2",
+    "sinon": "^1.17.6",
+    "superagent": "^3.2.1",
+    "supertest": "^2.0.1"
+  }
+}
