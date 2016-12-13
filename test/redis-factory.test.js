@@ -9,12 +9,14 @@ describe('redis-factory suite', function() {
     it('should return an object', function() {
       const client = redisFactory();
       client.should.be.instanceof(Object);
+      client.flushdb();
       client.end(true);
     });
     it('should perform communication with redis', function(done) {
       const client = redisFactory();
       client.set('key', 20, function(err, result) {
         result.should.equal('OK');
+        client.flushdb();
         client.end(true);
         done();
       });
@@ -23,6 +25,7 @@ describe('redis-factory suite', function() {
       const client = redisFactory();
       client.ping(function(err, result) {
         result.should.equal('PONG');
+        client.flushdb();
         client.end(true);
         done();
       });

@@ -13,10 +13,12 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-io.adapter(require('socket.io-redis')({
-  host: REDIS.HOST,
-  port: REDIS.PORT,
-}));
+if(process.env.NODE_ENV === 'production') {
+  io.adapter(require('socket.io-redis')({
+    host: REDIS.HOST,
+    port: REDIS.PORT,
+  }));
+}
 
 app.set('trust proxy', 1);
 

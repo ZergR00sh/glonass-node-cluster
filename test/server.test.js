@@ -7,11 +7,14 @@ describe('express server', function() {
     server = require('../src/app');
   });
 
-  afterEach(function() {
-    server.close();
+  afterEach(function(done) {
+    server.close(function() {
+      done();
+    });
   });
 
   it('responds to /api', function testSlash(done) {
+    this.timeout(10000);
     request(server)
       .get('/api')
       .expect(200, done);

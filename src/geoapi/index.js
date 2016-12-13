@@ -1,6 +1,7 @@
 const redis = require('redis');
 const client1 = require('../db/redis-factory')();
 const client2 = require('../db/redis-factory')();
+const client3 = require('../db/redis-factory')();
 const CHANNEL = require('../constants').CHANNEL;
 const USERS_COUNT = require('../constants').USERS_COUNT;
 
@@ -12,6 +13,7 @@ const USERS_COUNT = require('../constants').USERS_COUNT;
 function geoApi(io) {
   client1.on('message', function(channel, message) {
     if (channel === CHANNEL.GEO_STATE) {
+      console.log('geoAPI');
       try {
         // eslint-disable-next-line no-var
         var devicesCoords = JSON.parse(message);
@@ -25,9 +27,10 @@ function geoApi(io) {
   client1.subscribe(CHANNEL.GEO_STATE);
 
   return function(socket) {
-    client1.get(USERS_COUNT, checkAddedSocketThenPub);
+    console.log('client id is: ' + socket.id);
+    client3.incr(USERS_COUNT, checkAddedSocketThenPub);
     socket.on('disconnect', function() {
-      client1.get(USERS_COUNT, checkRemovedSocketThenPub);
+      client3.decr(USERS_COUNT, checkRemovedSocketThenPub);
     });
   };
 }
@@ -36,24 +39,37 @@ function geoApi(io) {
  * [checkAddedSocketThenPub description]
  * @param  {[type]} err [description]
  * @param  {[type]} res [description]
+ * @return  {Boolean} result
  */
 function checkAddedSocketThenPub(err, res) {
-  if(parseInt(res) == 0) {
+  let prev = res - 1;
+  if(err) {
+    console.log('#checkAddedSocketThenPub: ' + err);
+    return false;
+  }
+  if(prev === 0) {
+    console.log('publish to CHANNEL.HAS_USERS true ', res);
     client2.publish(CHANNEL.HAS_USERS, 'true', redis.print);
   }
-  client2.incr(USERS_COUNT);
 }
 
 /**
  * [checkRemovedSocketThenPub description]
  * @param  {[type]} err [description]
  * @param  {[type]} res [description]
+ * @return  {Boolean} result
  */
 function checkRemovedSocketThenPub(err, res) {
-  if(parseInt(res) == 1) {
+  let prev = res + 1;
+    console.log('disconnected');
+  if(err) {
+    console.log('#checkAddedSocketThenPub: ' + err);
+    return false;
+  }
+  if(prev == 1) {
+    console.log('publish to CHANNEL.HAS_USERS false ', res);
     client2.publish(CHANNEL.HAS_USERS, 'false', redis.print);
   }
-  client2.decr(USERS_COUNT);
 }
 
 module.exports = geoApi;

@@ -1,31 +1,74 @@
 const io = require('socket.io-client');
 const PORT = 1337;
 const socketURL = `http://0.0.0.0:${PORT}`;
+const redisFactory = require('../src/db/redis-factory');
+let redisClient1 = null;
+let redisClient2 = null;
+let redisClient3 = null;
+const CHANNEL = require('../src/constants').CHANNEL;
+const devices = ['devices'];
+const fixture = JSON.stringify(devices);
 // eslint-disable-next-line no-unused-vars
 const should = require('should');
 
-describe('express server', function() {
+describe('geoapi socket server', function() {
   let server;
 
-  before(function() {
+  beforeEach(function() {
+    redisClient1 = redisFactory();
+    redisClient2 = redisFactory();
+    redisClient3 = redisFactory();
+    redisClient3.flushdb();
     server = require('../src/app');
     server.listen(PORT);
   });
 
-  after(function() {
+  afterEach(function(done) {
     server.close();
+    redisClient3.flushdb();
+    redisClient3.end(true);
+    redisClient2.end(true);
+    redisClient1.end(true);
+    done();
   });
 
-  it('should connect to the server and can be disconnected', function(done) {
+  it('should connect to the server pub and retrive data', function(done) {
     this.timeout(10000);
-    let socket = io.connect(socketURL);
+    redisClient1.on('message', hasUsersHandler);
+    redisClient1.subscribe(CHANNEL.HAS_USERS);
 
-    socket.on('connect', function() {
-      socket.disconnect();
+    let socket2 = io.connect(socketURL);
+    let socket1 = io.connect(socketURL);
+    let socket3 = io.connect(socketURL);
+
+    socket1.on('devices-coords', function(data) {
+      data.devicesCoords.should.be.eql(devices);
+      setTimeout(() => {
+        socket1.disconnect();
+        done();
+      }, 500);
     });
 
-    socket.on('disconnect', function() {
-      done();
+    socket2.on('connect', function(data) {
+      setTimeout(() => {
+        socket2.disconnect();
+      }, 1500);
+    });
+
+    socket3.on('connect', function(data) {
+      setTimeout(() => {
+        socket3.disconnect();
+      }, 3000);
     });
   });
 });
+/**
+ * glonass-node-geoapi-polling-server responses fixture
+ * @param  {[type]}  channel [description]
+ * @param  {[type]}  message [description]
+ */
+function hasUsersHandler(channel, message) {
+    if(message === 'true') {
+      redisClient2.publish(CHANNEL.GEO_STATE, fixture);
+    }
+}
