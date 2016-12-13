@@ -1,4 +1,5 @@
 const publisher = require('../db/redis-factory')();
+const CHANNEL = require('../constants').CHANNEL;
 
 /**
  * Checks added socket in redis and if prev count
