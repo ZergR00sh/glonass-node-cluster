@@ -7,7 +7,6 @@ const publisher = require('../db/redis-factory')();
  * requesting session
  * @param  {Error} err possible error
  * @param  {String} res quering result
- * @return  {Boolean} result
  */
 function checkAddedSocketThenPub(err, res) {
   let prev = res - 1;
@@ -26,7 +25,6 @@ function checkAddedSocketThenPub(err, res) {
  * requesting session
  * @param  {Error} err possible error
  * @param  {String} res quering result
- * @return  {Boolean} result
  */
 function checkRemovedSocketThenPub(err, res) {
   let prev = res + 1;

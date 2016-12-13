@@ -1,4 +1,3 @@
-const redis = require('redis');
 const subscriber = require('../db/redis-factory')();
 const manipulator = require('../db/redis-factory')();
 const utils = require('./utils');
