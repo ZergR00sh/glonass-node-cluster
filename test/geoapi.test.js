@@ -62,6 +62,7 @@ describe('geoapi socket server', function() {
     });
   });
 });
+
 /**
  * glonass-node-geoapi-polling-server responses fixture
  * @param  {[type]}  channel [description]

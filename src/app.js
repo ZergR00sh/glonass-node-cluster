@@ -13,7 +13,7 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-if(process.env.NODE_ENV === 'production') {
+if(process.env.NODE_ENV === 'production' && process.env.CLUSTER_MODE) {
   io.adapter(require('socket.io-redis')({
     host: REDIS.HOST,
     port: REDIS.PORT,
