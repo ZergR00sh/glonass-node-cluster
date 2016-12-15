@@ -2,7 +2,7 @@
 const should = require('should');
 const io = require('socket.io-client');
 const PORT = 1337;
-const socketURL = `http://0.0.0.0:${PORT}`;
+const socketURL = `http://0.0.0.0:${PORT}/api`;
 const redisFactory = require('../src/db/redis-factory');
 let redisClient1 = null;
 let redisClient2 = null;
@@ -42,12 +42,12 @@ describe('geoapi socket server', function() {
     let socket1 = io.connect(socketURL);
     let socket3 = io.connect(socketURL);
 
-    socket1.on('devices-coords', function(data) {
-      data.devicesCoords.should.be.eql(devices);
+    socket1.on('devices', function(data) {
+      should.exists(data.devices);
       setTimeout(() => {
         socket1.disconnect();
         done();
-      }, 500);
+      }, 3000);
     });
 
     socket2.on('connect', function(data) {

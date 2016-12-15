@@ -16,7 +16,7 @@ describe('express server', function() {
   it('responds to /api', function testSlash(done) {
     this.timeout(10000);
     request(server)
-      .get('/api/users')
+      .get('/api')
       .expect(200, done);
   });
 

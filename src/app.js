@@ -12,6 +12,7 @@ const app = express();
 /* eslint new-cap: [0, {capIsNewExceptions: ["S"]}] */
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const nsp = io.of('/api');
 
 if(process.env.NODE_ENV === 'production' && process.env.CLUSTER_MODE) {
   io.adapter(require('socket.io-redis')({
@@ -35,7 +36,7 @@ if(process.env.NODE_ENV === 'production') {
 
 app.use('/api', api);
 
-io.on('connection', geoApi(io));
+nsp.on('connection', geoApi(nsp));
 
 app.use(function(req, res, next) {
   const err = new Error('Not Found');
