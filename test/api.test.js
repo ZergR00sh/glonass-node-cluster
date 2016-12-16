@@ -43,8 +43,8 @@ describe('geoapi socket server', function() {
     let socket3 = io.connect(socketURL);
 
     socket1.on('devices', function(data) {
-      should.exists(data.devices);
       setTimeout(() => {
+        should.exists(data.devices);
         socket1.disconnect();
         done();
       }, 2000);
