@@ -70,8 +70,7 @@ describe('geoapi socket server', function() {
  * @param  {[type]}  message [description]
  */
 function hasUsersHandler(channel, message) {
-    if(message === 'true') {
-      console.log('usersHandler');
+    if(message === CHANNEL.MSGS.FIRST_USER_ARRIVED) {
       redisClient2.publish(CHANNEL.GEO_STATE, fixture);
     }
 }
