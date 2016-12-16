@@ -47,7 +47,7 @@ describe('geoapi socket server', function() {
       setTimeout(() => {
         socket1.disconnect();
         done();
-      }, 3000);
+      }, 2000);
     });
 
     socket2.on('connect', function(data) {
@@ -71,6 +71,7 @@ describe('geoapi socket server', function() {
  */
 function hasUsersHandler(channel, message) {
     if(message === 'true') {
+      console.log('usersHandler');
       redisClient2.publish(CHANNEL.GEO_STATE, fixture);
     }
 }
